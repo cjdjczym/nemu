@@ -13,6 +13,7 @@ void cpu_exec(uint32_t);
 char *rl_gets() {
     static char *line_read = NULL;
 
+
     if (line_read) {
         free(line_read);
         line_read = NULL;
@@ -57,6 +58,20 @@ static int cmd_info(char *args) {
     return 0;
 }
 
+static int cmd_x(char *args) {
+    int n,i;
+    char *arg = strtok(args," ");
+    sscanf(arg,"%d",&n);
+    /* TODO: use the expr function */
+    swaddr_t address = 100000;
+    printf("0x%x",address);
+    for(i=1;i<=n;i++){
+        printf("0x%x",swaddr_read(address,4));
+        address += 4;
+    }
+    return 0;
+}
+
 static struct {
     char *name;
     char *description;
@@ -67,7 +82,8 @@ static struct {
         {"c",    "Continue the execution of the program",             cmd_c},
         {"q",    "Exit NEMU",                                         cmd_q},
         {"si",   "Program pauses after stepping through N commands",  cmd_si},
-        {"info", "Print the status of registers",                     cmd_info}
+        {"info", "Print the status of registers",                     cmd_info},
+        {"x","Calculate the expr and print memory address",cmd_x}
         /* TODO: Add more commands */
 
 };
