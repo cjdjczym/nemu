@@ -50,7 +50,7 @@ static int cmd_info(char *args) {
     int i;
     if (args[0] == 'r') {
         for (i = R_EAX; i <= R_EDI; i++)
-            printf("0x%x", reg_l(i));
+            printf("%s\t0x%x\n", regsl[i], reg_l(i));
     } else {
         printf("Unknown command '%c'\n", args[0]);
     }
