@@ -48,13 +48,11 @@ static int cmd_si(char *args) {
 
 static int cmd_info(char *args) {
     int i;
-    if (args[0] == 'i') {
+    if (args[0] == 'r') {
         for (i = R_EAX; i <= R_EDI; i++)
             printf("0x%x", reg_l(i));
     } else {
-        for (i = 0; i <= R_EDI; i++)
-            printf("0x%x", reg_l(i));
-        printf("Unknown register '%c'\n", args[0]);
+        printf("Unknown command '%c'\n", args[0]);
     }
     return 0;
 }
