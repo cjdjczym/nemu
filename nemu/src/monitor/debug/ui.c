@@ -64,9 +64,9 @@ static int cmd_x(char *args) {
     sscanf(arg,"%d",&n);
     /* TODO: use the expr function */
     swaddr_t address = 100000;
-    printf("0x%x",address);
+    printf("0x%x\n",address);
     for(i=1;i<=n;i++){
-        printf("0x%x",swaddr_read(address,4));
+        printf("0x%x\n",swaddr_read(address,4));
         address += 4;
     }
     return 0;
