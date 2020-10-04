@@ -51,7 +51,7 @@ static int cmd_info(char *args) {
     int i;
     if (args[0] == 'r') {
         for (i = R_EAX; i <= R_EDI; i++)
-            printf("%s\t0x%x\n", regsl[i], reg_l(i));
+            printf("%s\t0x%08x\n", regsl[i], reg_l(i));
     } else {
         printf("Unknown command '%c'\n", args[0]);
     }
@@ -59,13 +59,13 @@ static int cmd_info(char *args) {
 }
 
 static int cmd_x(char *args) {
-    int n,i;
-    char *arg = strtok(args," ");
-    sscanf(arg,"%d",&n);
+    int n, i;
+    char *arg = strtok(args, " ");
+    sscanf(arg, "%d", &n);
     /* TODO: use the expr function */
     swaddr_t address = 0x100000;
-    for(i=1;i<=n;i++){
-        printf("0x%x\t0x%x\n",address,swaddr_read(address,4));
+    for (i = 0; i < n; i++) {
+        printf("0x%x\t0x%08x\n", address, swaddr_read(address, 4));
         address += 4;
     }
     return 0;
@@ -82,7 +82,7 @@ static struct {
         {"q",    "Exit NEMU",                                         cmd_q},
         {"si",   "Program pauses after stepping through N commands",  cmd_si},
         {"info", "Print the status of registers",                     cmd_info},
-        {"x","Calculate the expr and print memory address",cmd_x}
+        {"x",    "Calculate the expr and print memory address",       cmd_x}
         /* TODO: Add more commands */
 
 };
