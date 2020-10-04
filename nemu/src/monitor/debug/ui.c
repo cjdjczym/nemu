@@ -46,6 +46,19 @@ static int cmd_si(char *args) {
     return 0;
 }
 
+static int cmd_info(char *args) {
+    int i;
+    if (args[0] == 'i') {
+        for (i = R_EAX; i <= R_EDI; i++)
+            printf("0x%x", reg_l(i));
+    } else {
+        for (i = 0; i <= R_EDI; i++)
+            printf("0x%x", reg_l(i));
+        printf("Unknown register '%c'\n", args[0]);
+    }
+    return 0;
+}
+
 static struct {
     char *name;
     char *description;
@@ -55,7 +68,8 @@ static struct {
         {"help", "Display informations about all supported commands", cmd_help},
         {"c",    "Continue the execution of the program",             cmd_c},
         {"q",    "Exit NEMU",                                         cmd_q},
-        {"si",   "Program pauses after stepping through N commands",  cmd_si}
+        {"si",   "Program pauses after stepping through N commands",  cmd_si},
+        {"info", "Print the status of registers",                     cmd_info}
         /* TODO: Add more commands */
 
 };
