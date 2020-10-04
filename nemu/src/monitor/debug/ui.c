@@ -63,7 +63,7 @@ static int cmd_x(char *args) {
     char *arg = strtok(args," ");
     sscanf(arg,"%d",&n);
     /* TODO: use the expr function */
-    swaddr_t address = 0x300000;
+    swaddr_t address = 0x100000;
     for(i=1;i<=n;i++){
         printf("0x%x\t0x%x\n",address,swaddr_read(address,4));
         address += 4;
