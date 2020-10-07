@@ -52,6 +52,8 @@ static int cmd_info(char *args) {
     if (args[0] == 'r') {
         for (i = R_EAX; i <= R_EDI; i++)
             printf("%s\t0x%08x\n", regsl[i], reg_l(i));
+    } else if (args[0] == 'w') {
+        print_wp();
     } else {
         printf("Unknown command '%c'\n", args[0]);
     }
@@ -73,10 +75,28 @@ static int cmd_x(char *args) {
     return 0;
 }
 
-static int cmd_p(char *args){
+static int cmd_p(char *args) {
     bool is_success;
-    uint32_t res = expr(args,&is_success);
+    uint32_t res = expr(args, &is_success);
     if (is_success) printf("result: %d\t0x%x\n", res, res);
+    return 0;
+}
+
+static int cmd_w(char *args) {
+    WP *wp = new_wp();
+    bool is_success;
+    uint32_t res = expr(args, &is_success);
+    if (!is_success) assert(1);
+    printf("Set watchpoint no. %d: %s = %d\n", wp->NO, args, res);
+    wp->result = res;
+    strcpy(wp->expr, args);
+    return 0;
+}
+
+static int cmd_d(char *args) {
+    int index;
+    sscanf(args, "%d", &index);
+    delete_wp(index);
     return 0;
 }
 
@@ -92,7 +112,9 @@ static struct {
         {"si",   "Program pauses after stepping through N commands", cmd_si},
         {"info", "Print the status of registers",                    cmd_info},
         {"x",    "Calculate the expr and print memory address",      cmd_x},
-        {"p",    "Calculate the expr and print the result",          cmd_p}
+        {"p",    "Calculate the expr and print the result",          cmd_p},
+        {"x",    "Set a watchpoint by giving expression",            cmd_w},
+        {"d",    "Print the status of watchpoints",                  cmd_d}
         /* TODO: Add more commands */
 
 };
