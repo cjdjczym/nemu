@@ -151,7 +151,7 @@ int dominant_operator(int p, int q) {
 uint32_t eval(int p, int q) {
     if (p > q) {
         assert(1);
-        return 0;
+        return -1;
     } else if (p == q) {
         uint32_t number = 0;
         if (tokens[p].type == NUM)
@@ -179,7 +179,7 @@ uint32_t eval(int p, int q) {
         }
     }
     assert(1);
-    return 0;
+    return -1;
 }
 
 uint32_t expr(char *e, bool *success) {
