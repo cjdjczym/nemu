@@ -171,8 +171,6 @@ uint32_t eval(int p, int q) {
         if (tokens[p].type == HEXNUM)
             sscanf(tokens[p].str, "%x", &number);
         if (tokens[p].type == REG) {
-//            printf("!!!!!!!!!!!!register name: %s\n", tokens[p].str);
-//            printf("????????????register length: %d\n", (int)strlen(tokens[p].str));
             if (strlen(tokens[p].str) == 3) {
                 int i;
                 for (i = R_EAX; i <= R_EDI; i++) if (strcmp(tokens[i].str, regsl[i]) == 0)break;
