@@ -115,8 +115,8 @@ bool check_parentheses(int p, int q) {
         int leftCount = 0, rightCount = 0;
         for (i = p + 1; i < q; i++) {
             if (tokens[i].type == '(')leftCount++;
-            if (tokens[i].type == ')')rightCount++;
-            if (rightCount > leftCount)return false;
+            else if (tokens[i].type == ')')rightCount++;
+            if (leftCount < rightCount)return false;
         }
         if (leftCount == rightCount) return true;
     }
