@@ -77,7 +77,6 @@ static int cmd_p(char *args){
     bool is_success;
     uint32_t res = expr(args,&is_success);
     if (is_success) printf("result: %d\t0x%x\n", res, res);
-    else printf("Wrong expression!\n");
     return 0;
 }
 
