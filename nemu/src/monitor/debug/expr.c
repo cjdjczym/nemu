@@ -149,7 +149,7 @@ int dominant_operator(int p, int q) {
 }
 
 uint32_t eval(int p, int q) {
-    printf("%c!!!!!!!!!!!!!!!!%c",tokens[p].type,tokens[q].type);
+    printf("%c!!!!!!!!!!!!!!!!%c\n",tokens[p].type,tokens[q].type);
     if (p > q) {
         assert(1);
         return -1;
