@@ -7,7 +7,7 @@
 #include <regex.h>
 
 enum {
-    NOTYPE = 256, EQ, NUM
+    NOTYPE = 256, EQ, NUM, NEG
 
     /* TODO: Add more token types */
 
@@ -188,6 +188,13 @@ uint32_t expr(char *e, bool *success) {
     if (!make_token(e)) {
         *success = false;
         return 0;
+    }
+    int i;
+    for(i = 0;i<nr_token;i++){
+        if(tokens[i].type == '-' && (i == 0 || tokens[i-1].type !=')')){
+            tokens[i].type = NEG;
+            tokens[i].precedence = 6;
+        }
     }
 
     /* TODO: Insert codes to evaluate the expression. */
