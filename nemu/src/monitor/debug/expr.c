@@ -7,7 +7,7 @@
 #include <regex.h>
 
 enum {
-    NOTYPE = 256, EQ, NUM, NEG, HEXNUM, REG, NEQ, AND, OR
+    NOTYPE = 256, EQ, NUM, NEG, HEXNUM, REG, NEQ, AND, OR, POINTER
 
     /* TODO: Add more token types */
 
@@ -194,13 +194,16 @@ uint32_t eval(int p, int q) {
         return eval(p + 1, q - 1);
     } else {
         int main_op = dominant_operator(p, q);
-        if (p == main_op || tokens[main_op].type == NEG || tokens[main_op].type == '!') {
+        if (p == main_op || tokens[main_op].type == NEG || tokens[main_op].type == '!' ||
+            tokens[main_op].type == POINTER) {
             uint32_t num = eval(p + 1, q);
             switch (tokens[p].type) {
                 case '!':
                     return !num;
                 case NEG:
                     return -num;
+                case POINTER:
+                    return swaddr_read(num, 4);
             }
         }
         uint32_t first = eval(p, main_op - 1);
@@ -241,6 +244,11 @@ uint32_t expr(char *e, bool *success) {
         if (tokens[i].type == '-' && (i == 0 || (tokens[i - 1].type != NUM && tokens[i - 1].type != HEXNUM &&
                                                  tokens[i - 1].type != REG && tokens[i - 1].type != ')'))) {
             tokens[i].type = NEG;
+            tokens[i].precedence = 6;
+        }
+        if (tokens[i].type == '*' && (i == 0 || (tokens[i - 1].type != NUM && tokens[i - 1].type != HEXNUM &&
+                                                 tokens[i - 1].type != REG && tokens[i - 1].type != ')'))) {
+            tokens[i].type = POINTER;
             tokens[i].precedence = 6;
         }
     }
