@@ -158,11 +158,9 @@ uint32_t eval(int p, int q) {
             sscanf(tokens[p].str, "%d", &number);
         return number;
     } else if (check_parentheses(p, q)) {
-//        printf("%c!!!!!!!!!!!!!!!!%c",tokens[p].type,tokens[q].type);
         return eval(p + 1, q - 1);
     }
     else {
-        printf("%d!!!!!!!!!!!!!!!!%d\n",tokens[p].type,tokens[q].type);
         int main_op = dominant_operator(p, q);
         uint32_t first = eval(p, main_op - 1);
         uint32_t second = eval(main_op + 1, q);
