@@ -73,6 +73,14 @@ static int cmd_x(char *args) {
     return 0;
 }
 
+static int cmd_p(char *args){
+    bool is_success;
+    uint32_t res = expr(args,&is_success);
+    if(is_success) printf("result: 0x%x\n",res);
+    else printf("Wrong expression!\n");
+    return 0;
+}
+
 static struct {
     char *name;
     char *description;
@@ -80,11 +88,12 @@ static struct {
     int (*handler)(char *);
 } cmd_table[] = {
         {"help", "Display information about all supported commands", cmd_help},
-        {"c",    "Continue the execution of the program",             cmd_c},
-        {"q",    "Exit NEMU",                                         cmd_q},
-        {"si",   "Program pauses after stepping through N commands",  cmd_si},
-        {"info", "Print the status of registers",                     cmd_info},
-        {"x",    "Calculate the expr and print memory address",       cmd_x}
+        {"c",    "Continue the execution of the program",            cmd_c},
+        {"q",    "Exit NEMU",                                        cmd_q},
+        {"si",   "Program pauses after stepping through N commands", cmd_si},
+        {"info", "Print the status of registers",                    cmd_info},
+        {"x",    "Calculate the expr and print memory address",      cmd_x},
+        {"p",    "Calculate the expr and print the result",          cmd_p}
         /* TODO: Add more commands */
 
 };
