@@ -113,7 +113,7 @@ static struct {
         {"info", "Print the status of registers",                    cmd_info},
         {"x",    "Calculate the expr and print memory address",      cmd_x},
         {"p",    "Calculate the expr and print the result",          cmd_p},
-        {"x",    "Set a watchpoint by giving expression",            cmd_w},
+        {"w",    "Set a watchpoint by giving expression",            cmd_w},
         {"d",    "Print the status of watchpoints",                  cmd_d}
         /* TODO: Add more commands */
 
