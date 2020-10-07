@@ -30,7 +30,7 @@ static struct rule {
         {"\\|\\|",                  OR,     1},      // or
         {"&&",                      AND,    2},      // and
         {"==",                      EQ,     3},      // equal
-        {"!-",                      NEQ,    3},      // not-equal
+        {"!=",                      NEQ,    3},      // not-equal
         {"\\+",                     '+',    4},      // plus
         {"-",                       '-',    4},      // minus
         {"\\*",                     '*',    5},      // multi
