@@ -150,7 +150,7 @@ int dominant_operator(int p, int q) {
 
 uint32_t eval(int p, int q) {
     if (p > q) {
-        Assert(p > q, "eval counting error\n");
+        assert(1);
         return 0;
     } else if (p == q) {
         uint32_t number = 0;
@@ -178,6 +178,7 @@ uint32_t eval(int p, int q) {
                 break;
         }
     }
+    assert(1);
     return 0;
 }
 
