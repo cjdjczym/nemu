@@ -159,9 +159,12 @@ uint32_t eval(int p, int q) {
         return number;
     } else if (check_parentheses(p, q)) {
         return eval(p + 1, q - 1);
-    }
-    else {
+    } else {
         int main_op = dominant_operator(p, q);
+        if (p == main_op || tokens[main_op].type == NEG) {
+            uint32_t num = eval(p + 1, q);
+            return -num;
+        }
         uint32_t first = eval(p, main_op - 1);
         uint32_t second = eval(main_op + 1, q);
 //        printf("first: %d\tsecond: %d\t%c\n", first, second, tokens[main_op].type);
@@ -190,8 +193,8 @@ uint32_t expr(char *e, bool *success) {
         return 0;
     }
     int i;
-    for(i = 0;i<nr_token;i++){
-        if(tokens[i].type == '-' && (i == 0 || tokens[i-1].type !=')')){
+    for (i = 0; i < nr_token; i++) {
+        if (tokens[i].type == '-' && (i == 0 || tokens[i - 1].type != ')')) {
             tokens[i].type = NEG;
             tokens[i].precedence = 6;
         }
