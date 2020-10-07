@@ -161,33 +161,32 @@ int dominant_operator(int p, int q) {
 }
 
 uint32_t eval(int p, int q) {
-    char *p_str = tokens[p].str;
     if (p > q) {
         assert(1);
         return -1;
     } else if (p == q) {
         uint32_t number = 0;
         if (tokens[p].type == NUM)
-            sscanf(p_str, "%d", &number);
+            sscanf(tokens[p].str, "%d", &number);
         if (tokens[p].type == HEXNUM)
-            sscanf(p_str, "%x", &number);
+            sscanf(tokens[p].str, "%x", &number);
         if (tokens[p].type == REG) {
-            if (strlen(p_str) == 3) {
+            if (strlen(tokens[p].str) == 3) {
                 int i;
                 for (i = R_EAX; i <= R_EDI; i++) if (strcmp(tokens[i].str, regsl[i]) == 0)break;
                 if (i <= R_EDI) number = reg_l(i);
                 else if (i > R_EDI && strcmp(tokens[i].str, "eip") == 0) number = cpu.eip;
                 else printf("Wrong register name: %s", tokens[i].str);
-            } else if (strlen(p_str) == 2) {
-                if (p_str[1] == 'x' || p_str[1] == 'p' || p_str[1] == 'i') {
+            } else if (strlen(tokens[p].str) == 2) {
+                if (tokens[p].str[1] == 'x' || tokens[p].str[1] == 'p' || tokens[p].str[1] == 'i') {
                     int i;
                     for (i = R_AX; i <= R_DI; i++)if (strcmp(tokens[i].str, regsw[i]) == 0)break;
                     number = reg_w(i);
-                } else if (p_str[1] == 'l' || p_str[1] == 'h') {
+                } else if (tokens[p].str[1] == 'l' || tokens[p].str[1] == 'h') {
                     int i;
                     for (i = R_AL; i <= R_BH; i++)if (strcmp(tokens[i].str, regsb[i]) == 0)break;
-                } else printf("Wrong register name: %s", p_str);
-            } else printf("Wrong register name: %s", p_str);
+                } else printf("Wrong register name: %s", tokens[p].str);
+            } else printf("Wrong register name: %s", tokens[p].str);
         }
         return number;
     } else if (check_parentheses(p, q)) {
