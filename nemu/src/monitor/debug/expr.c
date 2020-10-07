@@ -149,6 +149,7 @@ int dominant_operator(int p, int q) {
 }
 
 uint32_t eval(int p, int q) {
+    printf("%c!!!!!!!!!!!!!!!!%c",tokens[p].type,tokens[q].type);
     if (p > q) {
         assert(1);
         return -1;
@@ -158,7 +159,7 @@ uint32_t eval(int p, int q) {
             sscanf(tokens[p].str, "%d", &number);
         return number;
     } else if (check_parentheses(p, q)) {
-        printf("%c!!!!!!!!!!!!!!!!%c",tokens[p].type,tokens[q].type);
+//        printf("%c!!!!!!!!!!!!!!!!%c",tokens[p].type,tokens[q].type);
         return eval(p + 1, q - 1);
     }
     else {
