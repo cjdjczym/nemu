@@ -149,8 +149,10 @@ int dominant_operator(int p, int q) {
 }
 
 uint32_t eval(int p, int q) {
-    if (p > q)return 0;
-    else if (p == q) {
+    if (p > q) {
+        Assert(p > q, "eval counting error\n");
+        return 0;
+    } else if (p == q) {
         uint32_t number = 0;
         if (tokens[p].type == NUM)
             sscanf(tokens[p].str, "%d", &number);
@@ -160,7 +162,7 @@ uint32_t eval(int p, int q) {
         int main_op = dominant_operator(p, q);
         uint32_t first = eval(p, main_op - 1);
         uint32_t second = eval(main_op + 1, q);
-        printf("first: %d\tsecond: %d\t%c\n",first,second,tokens[main_op].type);
+        printf("first: %d\tsecond: %d\t%c\n", first, second, tokens[main_op].type);
         switch (tokens[main_op].type) {
             case '+':
                 return first + second;
@@ -172,9 +174,10 @@ uint32_t eval(int p, int q) {
                 return first / second;
             case EQ:
                 return first == second;
+            default:
+                break;
         }
     }
-    assert(1);
     return 0;
 }
 
