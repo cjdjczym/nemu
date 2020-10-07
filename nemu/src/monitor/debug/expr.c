@@ -23,7 +23,7 @@ static struct rule {
          * Pay attention to the precedence level of different rules.
          */
 
-        {"\\b[0-9]+\\b", NUM,    0},        // %d number
+        {"\b[0-9]+\b", NUM,    0},        // %d number
         {" +",           NOTYPE, 0},        // spaces
         {"==",           EQ,     3},        // equal
         {"\\+",          '+',    4},        // plus
