@@ -7,7 +7,7 @@
 #include <regex.h>
 
 enum {
-    NOTYPE = 256, EQ, NUM, NEG
+    NOTYPE = 256, EQ, NUM, NEG, HEXNUM, REG, NEQ, AND, OR
 
     /* TODO: Add more token types */
 
@@ -23,15 +23,21 @@ static struct rule {
          * Pay attention to the precedence level of different rules.
          */
 
-        {"\\b[0-9]+\\b", NUM,    0},        // %d number
-        {" +",           NOTYPE, 0},        // spaces
-        {"==",           EQ,     3},        // equal
-        {"\\+",          '+',    4},        // plus
-        {"-",            '-',    4},        // minus
-        {"\\*",          '*',    5},        // multi
-        {"/",            '/',    5},        // divide
-        {"\\(",          '(',    7},        // left bracket
-        {"\\)",          ')',    7},        // right bracket
+        {"\\b[0-9]+\\b",            NUM,    0},      // %d number
+        {"\\b0[xX][0-9a-fA-F]+\\b", HEXNUM, 0},      // %x number
+        {"\\$[a-zA-Z]+",            REG,    0},      // register
+        {" +",                      NOTYPE, 0},      // spaces
+        {"\\|\\|",                  OR,     1},      // or
+        {"&&",                      AND,    2},      // and
+        {"==",                      EQ,     3},      // equal
+        {"!-",                      NEQ,    3},      // not-equal
+        {"\\+",                     '+',    4},      // plus
+        {"-",                       '-',    4},      // minus
+        {"\\*",                     '*',    5},      // multi
+        {"/",                       '/',    5},      // divide
+        {"!",                       '!',    6},      // not
+        {"\\(",                     '(',    7},      // left bracket
+        {"\\)",                     ')',    7},      // right bracket
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -89,6 +95,12 @@ static bool make_token(char *e) {
                 switch (rules[i].token_type) {
                     case NOTYPE:
                         break;
+                    case REG:
+                        tokens[nr_token].precedence = rules[i].precedence;
+                        tokens[nr_token].type = rules[i].token_type;
+                        strncpy(tokens[nr_token].str, substr_start + 1, substr_len - 1);
+                        nr_token++;
+                        break;
                     default:
                         tokens[nr_token].type = rules[i].token_type;
                         tokens[nr_token].precedence = rules[i].precedence;
@@ -128,7 +140,7 @@ int dominant_operator(int p, int q) {
     int min_level = 8;
     int res = p;
     for (i = p; i <= q; i++) {
-        if (tokens[i].type == NUM) continue;
+        if (tokens[i].type == NUM || tokens[i].type == HEXNUM) continue;
         bool is_dominant = true;
         int count = 0;
         for (j = i - 1; j >= p; j--) {
@@ -149,21 +161,47 @@ int dominant_operator(int p, int q) {
 }
 
 uint32_t eval(int p, int q) {
+    char *p_str = tokens[p].str;
     if (p > q) {
         assert(1);
         return -1;
     } else if (p == q) {
         uint32_t number = 0;
         if (tokens[p].type == NUM)
-            sscanf(tokens[p].str, "%d", &number);
+            sscanf(p_str, "%d", &number);
+        if (tokens[p].type == HEXNUM)
+            sscanf(p_str, "%x", &number);
+        if (tokens[p].type == REG) {
+            if (strlen(p_str) == 3) {
+                int i;
+                for (i = R_EAX; i <= R_EDI; i++) if (strcmp(tokens[i].str, regsl[i]) == 0)break;
+                if (i <= R_EDI) number = reg_l(i);
+                else if (i > R_EDI && strcmp(tokens[i].str, "eip") == 0) number = cpu.eip;
+                else printf("Wrong register name: %s", tokens[i].str);
+            } else if (strlen(p_str) == 2) {
+                if (p_str[1] == 'x' || p_str[1] == 'p' || p_str[1] == 'i') {
+                    int i;
+                    for (i = R_AX; i <= R_DI; i++)if (strcmp(tokens[i].str, regsw[i]) == 0)break;
+                    number = reg_w(i);
+                } else if (p_str[1] == 'l' || p_str[1] == 'h') {
+                    int i;
+                    for (i = R_AL; i <= R_BH; i++)if (strcmp(tokens[i].str, regsb[i]) == 0)break;
+                } else printf("Wrong register name: %s", p_str);
+            } else printf("Wrong register name: %s", p_str);
+        }
         return number;
     } else if (check_parentheses(p, q)) {
         return eval(p + 1, q - 1);
     } else {
         int main_op = dominant_operator(p, q);
-        if (p == main_op || tokens[main_op].type == NEG) {
+        if (p == main_op || tokens[main_op].type == NEG || tokens[main_op].type == '!') {
             uint32_t num = eval(p + 1, q);
-            return -num;
+            switch (tokens[p].type) {
+                case '!':
+                    return !num;
+                case NEG:
+                    return -num;
+            }
         }
         uint32_t first = eval(p, main_op - 1);
         uint32_t second = eval(main_op + 1, q);
@@ -179,6 +217,12 @@ uint32_t eval(int p, int q) {
                 return first / second;
             case EQ:
                 return first == second;
+            case NEQ:
+                return first != second;
+            case AND:
+                return first && second;
+            case OR:
+                return first || second;
             default:
                 break;
         }
@@ -194,7 +238,8 @@ uint32_t expr(char *e, bool *success) {
     }
     int i;
     for (i = 0; i < nr_token; i++) {
-        if (tokens[i].type == '-' && (i == 0 || tokens[i - 1].type != ')')) {
+        if (tokens[i].type == '-' && (i == 0 || (tokens[i - 1].type != NUM && tokens[i - 1].type != HEXNUM &&
+                                                 tokens[i - 1].type != REG && tokens[i - 1].type != ')'))) {
             tokens[i].type = NEG;
             tokens[i].precedence = 6;
         }
