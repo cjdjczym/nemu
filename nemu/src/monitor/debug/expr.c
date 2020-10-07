@@ -162,7 +162,7 @@ uint32_t eval(int p, int q) {
         return eval(p + 1, q - 1);
     }
     else {
-        printf("%c!!!!!!!!!!!!!!!!%c\n",tokens[p].type,tokens[q].type);
+        printf("%d!!!!!!!!!!!!!!!!%d\n",tokens[p].type,tokens[q].type);
         int main_op = dominant_operator(p, q);
         uint32_t first = eval(p, main_op - 1);
         uint32_t second = eval(main_op + 1, q);
