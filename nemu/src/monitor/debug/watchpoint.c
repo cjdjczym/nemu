@@ -83,5 +83,5 @@ void print_wp() {
 
 void delete_wp(int index) {
     free_wp(&wp_pool[index]);
-    printf("Success delete watchpoint %d",index);
+    printf("Success delete watchpoint %d\n",index);
 }
