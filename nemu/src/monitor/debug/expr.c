@@ -173,18 +173,18 @@ uint32_t eval(int p, int q) {
         if (tokens[p].type == REG) {
             if (strlen(tokens[p].str) == 3) {
                 int i;
-                for (i = R_EAX; i <= R_EDI; i++) if (strcmp(tokens[i].str, regsl[i]) == 0)break;
+                for (i = R_EAX; i <= R_EDI; i++) if (strcmp(tokens[p].str, regsl[i]) == 0)break;
                 if (i <= R_EDI) number = reg_l(i);
                 else if (i > R_EDI && strcmp(tokens[i].str, "eip") == 0) number = cpu.eip;
                 else printf("1Wrong register name: %s\n", tokens[i].str);
             } else if (strlen(tokens[p].str) == 2) {
                 if (tokens[p].str[1] == 'x' || tokens[p].str[1] == 'p' || tokens[p].str[1] == 'i') {
                     int i;
-                    for (i = R_AX; i <= R_DI; i++)if (strcmp(tokens[i].str, regsw[i]) == 0)break;
+                    for (i = R_AX; i <= R_DI; i++)if (strcmp(tokens[p].str, regsw[i]) == 0)break;
                     number = reg_w(i);
                 } else if (tokens[p].str[1] == 'l' || tokens[p].str[1] == 'h') {
                     int i;
-                    for (i = R_AL; i <= R_BH; i++)if (strcmp(tokens[i].str, regsb[i]) == 0)break;
+                    for (i = R_AL; i <= R_BH; i++)if (strcmp(tokens[p].str, regsb[i]) == 0)break;
                 } else printf("2Wrong register name: %s\n", tokens[p].str);
             } else printf("3Wrong register name: %s\n", tokens[p].str);
         }
