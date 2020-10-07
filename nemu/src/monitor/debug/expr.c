@@ -164,7 +164,7 @@ uint32_t eval(int p, int q) {
         int main_op = dominant_operator(p, q);
         uint32_t first = eval(p, main_op - 1);
         uint32_t second = eval(main_op + 1, q);
-        printf("first: %d\tsecond: %d\t%c\n", first, second, tokens[main_op].type);
+//        printf("first: %d\tsecond: %d\t%c\n", first, second, tokens[main_op].type);
         switch (tokens[main_op].type) {
             case '+':
                 return first + second;
