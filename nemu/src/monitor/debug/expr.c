@@ -7,7 +7,7 @@
 #include <regex.h>
 
 enum {
-    NOTYPE = 256, EQ, NUM, NEG, HEXNUM, REG, NEQ, AND, OR, POINTER
+    NOTYPE = 256, EQ, NUM, NEG, HEXNUM, REG, NEQ, AND, OR, POINTER, SYMBOL
 
     /* TODO: Add more token types */
 
@@ -38,9 +38,12 @@ static struct rule {
         {"!",                       '!',    6},      // not
         {"\\(",                     '(',    7},      // left bracket
         {"\\)",                     ')',    7},      // right bracket
+        {"\\b[a-zA-Z0-9_]+\\b",     SYMBOL, 0}
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
+
+uint32_t get_symbol_addr(char *str,bool *success);
 
 static regex_t re[NR_REGEX];
 
@@ -140,7 +143,8 @@ int dominant_operator(int p, int q) {
     int min_level = 8;
     int res = p;
     for (i = p; i <= q; i++) {
-        if (tokens[i].type == NUM || tokens[i].type == HEXNUM) continue;
+        if (tokens[i].type == NUM || tokens[i].type == HEXNUM || tokens[i].type == REG || tokens[i].type == SYMBOL)
+            continue;
         bool is_dominant = true;
         int count = 0;
         for (j = i - 1; j >= p; j--) {
@@ -187,6 +191,11 @@ uint32_t eval(int p, int q) {
                     for (i = R_AL; i <= R_BH; i++)if (strcmp(tokens[p].str, regsb[i]) == 0)break;
                 } else printf("Wrong register name: %s\n", tokens[p].str);
             } else printf("Wrong register name: %s\n", tokens[p].str);
+        }
+        if(tokens[p].type == SYMBOL){
+            bool *is_success = false;
+            number = get_symbol_addr(tokens[p].str, is_success);
+            if(!*is_success) return 0;
         }
         return number;
     } else if (check_parentheses(p, q)) {
@@ -241,12 +250,12 @@ uint32_t expr(char *e, bool *success) {
     int i;
     for (i = 0; i < nr_token; i++) {
         if (tokens[i].type == '-' && (i == 0 || (tokens[i - 1].type != NUM && tokens[i - 1].type != HEXNUM &&
-                                                 tokens[i - 1].type != REG && tokens[i - 1].type != ')'))) {
+                tokens[i - 1].type != REG && tokens[i - 1].type != SYMBOL && tokens[i - 1].type != ')'))) {
             tokens[i].type = NEG;
             tokens[i].precedence = 6;
         }
         if (tokens[i].type == '*' && (i == 0 || (tokens[i - 1].type != NUM && tokens[i - 1].type != HEXNUM &&
-                                                 tokens[i - 1].type != REG && tokens[i - 1].type != ')'))) {
+                tokens[i - 1].type != REG && tokens[i - 1].type != SYMBOL && tokens[i - 1].type != ')'))) {
             tokens[i].type = POINTER;
             tokens[i].precedence = 6;
         }
