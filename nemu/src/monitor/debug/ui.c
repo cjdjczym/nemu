@@ -14,7 +14,6 @@ void get_fun_address(swaddr_t EIP, char* name);
 char *rl_gets() {
     static char *line_read = NULL;
 
-
     if (line_read) {
         free(line_read);
         line_read = NULL;
@@ -106,6 +105,7 @@ typedef struct {
 	swaddr_t ret_addr;
 	uint32_t args[4];
 }PartOfStackFrame ;
+
 static int cmd_bt(char* args){
 	if (args != NULL){
 		printf("Wrong Command!");
@@ -116,7 +116,6 @@ static int cmd_bt(char* args){
 	int cnt = 0;
 	EBP.ret_addr = cpu.eip;
 	swaddr_t addr = cpu.ebp;
-	// printf("%d\n",addr);
 	int i;
 	while (addr){
 		get_fun_address(EBP.ret_addr,name);
