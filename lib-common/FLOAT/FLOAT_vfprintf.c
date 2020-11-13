@@ -26,7 +26,27 @@ static void modify_vfprintf() {
 	 * is the code section in _vfprintf_internal() relative to the
 	 * hijack.
 	 */
-
+	uint32_t vf_addr = (int)(&_vfprintf_internal);
+	uint32_t nop = 0x90;
+	uint32_t call_o = 0x306;
+	char *opcode = (char*)(vf_addr + call_o - 0xa); // push
+	*opcode = 0xff;
+	opcode = (char*)(vf_addr + call_o - 0x9); // ModR/M
+	*opcode = 0x32;
+	opcode = (char*)(vf_addr + call_o - 0x8);
+	*opcode = nop;
+	opcode = (char*)(vf_addr + call_o - 0xb); //sub 0x8,%esp
+	*opcode = 0x08;
+	opcode = (char*)(vf_addr + call_o - 0x22);
+	*opcode = nop;
+	opcode = (char*)(vf_addr + call_o - 0x21);
+	*opcode = nop;
+	opcode = (char*)(vf_addr + call_o - 0x1e);
+	*opcode = nop;
+	opcode = (char*)(vf_addr + call_o - 0x1d);
+	*opcode = nop;
+	int *call_addr = (int*)(vf_addr + call_o + 1);
+	*call_addr += (int)format_FLOAT - (int)(&_fpmaxtostr);
 #if 0
 	else if (ppfs->conv_num <= CONV_A) {  /* floating point */
 		ssize_t nf;
