@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "FLOAT.h"
+#include <sys/mman.h>
 
 extern char _vfprintf_internal;
 extern char _fpmaxtostr;
@@ -27,8 +28,9 @@ static void modify_vfprintf() {
 	 * hijack.
 	 */
 	uint32_t vf_addr = (int)(&_vfprintf_internal);
-	uint32_t nop = 0x90;
 	uint32_t call_o = 0x306;
+	uint32_t nop = 0x90;
+	mprotect((void*)((vf_addr + call_o - 100) & 0xfffff000), 4096*2, PROT_READ|PROT_WRITE|PROT_EXEC);
 	char *opcode = (char*)(vf_addr + call_o - 0xa); // push
 	*opcode = 0xff;
 	opcode = (char*)(vf_addr + call_o - 0x9); // ModR/M
