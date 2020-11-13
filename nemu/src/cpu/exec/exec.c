@@ -229,7 +229,6 @@ helper_fun _2byte_opcode_table [256] = {
 
 make_helper(exec) {
 	ops_decoded.opcode = instr_fetch(eip, 1);
-	printf("opcode: %d\n", ops_decoded.opcode);
 	return opcode_table[ ops_decoded.opcode ](eip);
 }
 
