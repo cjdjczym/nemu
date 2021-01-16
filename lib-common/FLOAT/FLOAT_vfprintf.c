@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "FLOAT.h"
+#include <sys/mman.h>
 
 extern char _vfprintf_internal;
 extern char _fpmaxtostr;
+extern char _ppfs_setargs;
 extern int __stdio_fwrite(char *buf, int len, FILE *stream);
 
 __attribute__((used)) static int format_FLOAT(FILE *stream, FLOAT f) {
@@ -16,7 +18,20 @@ __attribute__((used)) static int format_FLOAT(FILE *stream, FLOAT f) {
 	 */
 
 	char buf[80];
-	int len = sprintf(buf, "0x%08x", f);
+	int op = (f >> 31) & 0x1;
+	if (op) f = (~f) + 1;
+	int frac = 0;
+	int i;
+	int base = 100000000;
+	for (i = 15;i >= 0;i--){
+		base >>= 1;
+		if (f & (1 << i)) frac += base;
+	}
+	int num = f >> 16;
+	int len = 0;
+	while (frac > 999999) frac /= 10;
+	if (op) len = sprintf(buf,"-%d.%06d",num,frac);
+	else len = sprintf(buf,"%d.%06d",num,frac);
 	return __stdio_fwrite(buf, len, stream);
 }
 
@@ -26,7 +41,28 @@ static void modify_vfprintf() {
 	 * is the code section in _vfprintf_internal() relative to the
 	 * hijack.
 	 */
-
+	uint32_t vf_addr = (int)(&_vfprintf_internal);
+	uint32_t call_o = 0x306;
+	uint32_t nop = 0x90;
+	// mprotect((void*)((vf_addr + call_o - 100) & 0xfffff000), 4096*2, PROT_READ|PROT_WRITE|PROT_EXEC);
+	char *opcode = (char*)(vf_addr + call_o - 0xa); // push
+	*opcode = 0xff;
+	opcode = (char*)(vf_addr + call_o - 0x9); // ModR/M
+	*opcode = 0x32;
+	opcode = (char*)(vf_addr + call_o - 0x8);
+	*opcode = nop;
+	opcode = (char*)(vf_addr + call_o - 0xb); //sub 0x8,%esp
+	*opcode = 0x08;
+	opcode = (char*)(vf_addr + call_o - 0x22);
+	*opcode = nop;
+	opcode = (char*)(vf_addr + call_o - 0x21);
+	*opcode = nop;
+	opcode = (char*)(vf_addr + call_o - 0x1e);
+	*opcode = nop;
+	opcode = (char*)(vf_addr + call_o - 0x1d);
+	*opcode = nop;
+	int *call_addr = (int*)(vf_addr + call_o + 1);
+	*call_addr += (int)format_FLOAT - (int)(&_fpmaxtostr);
 #if 0
 	else if (ppfs->conv_num <= CONV_A) {  /* floating point */
 		ssize_t nf;
@@ -72,6 +108,14 @@ static void modify_ppfs_setargs() {
 	 * Below is the code section in _vfprintf_internal() relative to
 	 * the modification.
 	 */
+
+	int addr = (int)(&_ppfs_setargs);
+	char *opcode = (char*)(addr + 0x71);
+	*opcode = 0xeb;
+	opcode = (char*)(addr + 0x72);
+	*opcode = 0x30;
+	opcode = (char*)(addr + 0x73);
+	*opcode = 0x90;
 
 #if 0
 	enum {                          /* C type: */
