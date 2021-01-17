@@ -109,8 +109,6 @@ int read_ModR_M(swaddr_t eip, Operand *rm, Operand *reg) {
 	}
 	else {
 		int instr_len = load_addr(eip, &m, rm);
-		printf("src/cpu/decode/modrm.c\n");
-		printf("addr: %d, sreg: %d\n", rm->addr, rm->sreg);
 		rm->val = swaddr_read(rm->addr, rm->size, rm->sreg);
 		return instr_len;
 	}

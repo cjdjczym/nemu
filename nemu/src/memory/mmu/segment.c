@@ -27,7 +27,6 @@ void load_sreg(uint8_t sreg, uint16_t sel) {
 }
 
 lnaddr_t segment_translate(swaddr_t addr, uint8_t sreg) {
-	printf("sreg: %d\n", sreg);
 #ifdef DEBUG
 	assert(sreg < 6);
 #endif
