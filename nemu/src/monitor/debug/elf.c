@@ -81,33 +81,33 @@ void load_elf_tables(int argc, char *argv[]) {
 	fclose(fp);
 }
 
-uint32_t get_symbol_addr(char* str,bool* success){
+uint32_t look_up_symtab(char *sym, bool *success) {
 	int i;
-	for (i = 0; i < nr_symtab_entry; i++){
-		if ((symtab[i].st_info & 0xf) == STT_OBJECT){
-			char syb[32];
-			int stlen = strlen(str);
-			strncpy(syb,strtab + symtab[i].st_name,stlen);
-			syb [stlen] = '\0';
-			if (strcmp(syb,str) == 0){
-				return symtab[i].st_value;
-			} 
+	for(i = 0; i < nr_symtab_entry; i ++) {
+		uint8_t type = ELF32_ST_TYPE(symtab[i].st_info);
+		if((type == STT_FUNC || type == STT_OBJECT) && 
+				strcmp(strtab + symtab[i].st_name, sym) == 0) {
+			*success = true;
+			return symtab[i].st_value;
 		}
 	}
+
 	*success = false;
 	return 0;
 }
 
-void get_fun_address(swaddr_t cur_addr,char* name){
+const char* find_fun_name(uint32_t eip) {
+	static const char not_found[] = "???";
+
 	int i;
-	for (i = 0; i < nr_symtab_entry; i++){
-		if ((symtab[i].st_info & 0xf) == STT_FUNC){
-			// printf("0x%08x\n",symtab[i].st_value);
-			if (cur_addr >= symtab[i].st_value && symtab[i].st_value + symtab[i].st_size >= cur_addr){
-				strcpy(name,strtab + symtab[i].st_name);
-				return;
-			}
+	for(i = 0; i < nr_symtab_entry; i ++) {
+		if(ELF32_ST_TYPE(symtab[i].st_info) == STT_FUNC && 
+				eip >= symtab[i].st_value && eip < symtab[i].st_value + symtab[i].st_size) {
+			return strtab + symtab[i].st_name;
 		}
 	}
-	name[0]='\0';
+
+	return not_found;
 }
+
+
