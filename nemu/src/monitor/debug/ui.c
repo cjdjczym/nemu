@@ -69,7 +69,7 @@ static int cmd_x(char *args) {
     swaddr_t address = expr(args, &is_success);
     if (!is_success) assert(1);
     for (i = 0; i < n; i++) {
-        printf("0x%x\t0x%08x\n", address, swaddr_read(address, 4));
+        printf("0x%x\t0x%08x\n", address, swaddr_read(address, 4, R_DS));
         address += 4;
     }
     return 0;
@@ -122,11 +122,11 @@ static int cmd_bt(char* args){
 		if (name[0] == '\0') break;
 		printf("#%d\t0x%08x\t",cnt++,EBP.ret_addr);
 		printf("%s",name);
-		EBP.prev_ebp = swaddr_read(addr,4);
-		EBP.ret_addr = swaddr_read(addr + 4, 4);
+		EBP.prev_ebp = swaddr_read(addr,4, R_SS);
+		EBP.ret_addr = swaddr_read(addr + 4, 4, R_SS);
 		printf("(");
 		for (i = 0;i < 4;i ++){
-			EBP.args[i] = swaddr_read(addr + 8 + i * 4, 4);
+			EBP.args[i] = swaddr_read(addr + 8 + i * 4, 4, R_SS);
 			printf("0x%x",EBP.args[i]);
 			if (i == 3) printf(")\n");else printf(", ");
 		}

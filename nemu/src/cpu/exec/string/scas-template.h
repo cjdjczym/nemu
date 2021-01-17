@@ -3,7 +3,7 @@
 #define instr scas
 
 make_helper(concat(scas_, SUFFIX)) {
-    uint32_t t2 = MEM_R(reg_l(R_EDI));
+    uint32_t t2 = MEM_R(R_ES, cpu.edi);
     uint32_t t1 = REG(R_EAX);
 
     uint32_t ret = t1 - t2;

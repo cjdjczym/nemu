@@ -13,6 +13,7 @@ typedef struct {
 		swaddr_t addr;
 		uint32_t imm;
 		int32_t simm;
+		uint8_t sreg;
 	};
 	uint32_t val;
 	char str[OP_STR_SIZE];

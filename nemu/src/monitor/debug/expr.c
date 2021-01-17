@@ -297,7 +297,7 @@ uint32_t eval(int l, int r) {
             uint32_t r_ans = eval(pos + 1, r);
             switch (tokens[pos].type) {
                 case POINTER:
-                    return swaddr_read(r_ans, 4);
+                    return swaddr_read(r_ans, 4, R_DS);
                 case NOT:
                     return !r_ans;
                 case MINUS:
