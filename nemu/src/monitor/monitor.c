@@ -42,7 +42,7 @@ void init_monitor(int argc, char *argv[]) {
 	init_wp_pool();
 
 	make_all_cache();
-	make_all_tlb();
+        make_all_tlb();
 
 	/* Display welcome message. */
 	welcome();
@@ -92,7 +92,7 @@ void restart() {
 
 	/* Set the initial instruction pointer. */
 	cpu.eip = ENTRY_START;
-	cpu.EFLAGS = 0x2;
+    cpu.EFLAGS = 0x2;
 	cpu.cr0.val = 0x0;
 
 	/* Initialize DRAM. */
