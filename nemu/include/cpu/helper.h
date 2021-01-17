@@ -8,7 +8,7 @@
 #define make_helper(name) int name(swaddr_t eip)
 
 static inline uint32_t instr_fetch(swaddr_t addr, size_t len) {
-	printf("fetch\n");
+	printf("fetch addr: %d\n", addr);
 	return swaddr_read(addr, len, R_CS);
 }
 
