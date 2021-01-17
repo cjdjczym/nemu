@@ -6,7 +6,7 @@ uint32_t lnaddr_read(lnaddr_t, size_t);
 
 void load_sreg(uint8_t sreg, uint16_t sel) {
 	printf("sreg: %d\n", sreg);
-	assert(sreg < 6);
+	// assert(sreg < 6);
 	cpu.sreg[sreg].val = sel;
 	assert(cpu.sreg[sreg].ti == 0);		// only GDT is simulated
 
