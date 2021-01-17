@@ -4,30 +4,12 @@
 #include "data-mov/xchg.h"
 #include "data-mov/push.h"
 #include "data-mov/pop.h"
+#include "data-mov/movext.h"
 #include "data-mov/cltd.h"
 #include "data-mov/leave.h"
-#include "data-mov/movext.h"
-#include "data-mov/movzb.h"
-#include "data-mov/movzw.h"
-#include "data-mov/movsx.h"
 #include "data-mov/mov-sreg.h"
 
-#include "jcc/call.h"
-#include "jcc/je.h"
-#include "jcc/ret.h"
-#include "jcc/jmp.h"
-#include "jcc/jbe.h"
-#include "jcc/jne.h"
-#include "jcc/jle.h"
-#include "jcc/jg.h"
-#include "jcc/jl.h"
-#include "jcc/jge.h"
-#include "jcc/ja.h"
-#include "jcc/js.h"
-#include "jcc/jns.h"
-#include "jcc/jb.h"
-#include "jcc/jae.h"
-
+#include "arith/cmp.h"
 #include "arith/dec.h"
 #include "arith/inc.h"
 #include "arith/neg.h"
@@ -35,10 +17,9 @@
 #include "arith/mul.h"
 #include "arith/idiv.h"
 #include "arith/div.h"
-#include "arith/cmp.h"
+#include "arith/sub.h"
 #include "arith/add.h"
 #include "arith/adc.h"
-#include "arith/sub.h"
 #include "arith/sbb.h"
 
 #include "logic/and.h"
@@ -50,7 +31,12 @@
 #include "logic/shr.h"
 #include "logic/shrd.h"
 #include "logic/test.h"
-#include "logic/setne.h"
+#include "logic/setcc.h"
+
+#include "control/call.h"
+#include "control/ret.h"
+#include "control/jcc.h"
+#include "control/jmp.h"
 
 #include "string/rep.h"
 #include "string/movs.h"
@@ -58,10 +44,10 @@
 #include "string/scas.h"
 #include "string/stos.h"
 
+#include "flags/flags.h"
+
 #include "misc/misc.h"
 
 #include "special/special.h"
-
-#include "flags/flags.h"
 
 #include "system/system.h"

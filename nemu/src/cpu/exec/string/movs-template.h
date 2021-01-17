@@ -3,19 +3,12 @@
 #define instr movs
 
 make_helper(concat(movs_, SUFFIX)) {
+	MEM_W(R_DS, cpu.edi, MEM_R(R_DS, cpu.esi));
+	cpu.esi += (cpu.eflags.DF ? -DATA_BYTE : DATA_BYTE);
+	cpu.edi += (cpu.eflags.DF ? -DATA_BYTE : DATA_BYTE);
 
-    MEM_W(R_DS, cpu.edi, MEM_R(R_DS, cpu.esi));
-	if (cpu.DF == 0) {
-        reg_l(R_EDI) += DATA_BYTE;
-        reg_l(R_ESI) += DATA_BYTE;
-    }else {
-        reg_l(R_EDI) -= DATA_BYTE;
-        reg_l(R_ESI) -= DATA_BYTE;
-    }
-	print_asm("movs");
-    return 1;
+	print_asm("movs" str(SUFFIX) " %%ds:(%%esi),%%es:(%%edi)");
+	return 1;
 }
-
-
 
 #include "cpu/exec/template-end.h"
