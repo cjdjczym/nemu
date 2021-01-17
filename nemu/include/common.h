@@ -2,8 +2,6 @@
 #define __COMMON_H__
 
 #define USE_RAMDISK
-#define ENABLE_CACHE
-//#define ENABLE_TLB
 
 /* You will define this macro in PA4 */
 //#define HAS_DEVICE

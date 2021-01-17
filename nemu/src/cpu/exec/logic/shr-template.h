@@ -9,7 +9,20 @@ static void do_execute () {
 	uint8_t count = src & 0x1f;
 	dest >>= count;
 	OPERAND_W(op_dest, dest);
-        update_eflags_pf_zf_sf(dest);
+
+	DATA_TYPE ret = dest;
+	cpu.CF = 0;
+	cpu.OF = 0;
+	cpu.ZF = !ret;
+    cpu.SF = ret >> ((DATA_BYTE << 3) - 1);
+	ret ^= ret >> 4;
+    ret ^= ret >> 2;
+    ret ^= ret >> 1;
+    ret &= 1;
+    cpu.PF = !ret;
+	/* There is no need to update EFLAGS, since no other instructions 
+	 * in PA will test the flags updated by this instruction.
+	 */
 
 	print_asm_template2();
 }
