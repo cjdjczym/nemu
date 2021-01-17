@@ -73,7 +73,7 @@ void init_cond() {
 	 */
 	Log("Hello, NEMU world!");
 
-#if defined(IA32_PAGE) && defined(HAS_DEVICE)
+#if defined(IA32_PAGE) //&& defined(HAS_DEVICE)
 	/* Write some test data to the video memory. */
 	video_mapping_write_test();
 #endif
@@ -81,7 +81,7 @@ void init_cond() {
 	/* Load the program. */
 	uint32_t eip = loader();
 	
-#if defined(IA32_PAGE) && defined(HAS_DEVICE)
+#if defined(IA32_PAGE) //&& defined(HAS_DEVICE)
 	/* Read data in the video memory to check whether 
 	 * the test data is written sucessfully.
 	 */
@@ -103,6 +103,7 @@ void init_cond() {
 
 	/* Here we go! */
 	((void(*)(void))eip)();
+
 	HIT_GOOD_TRAP;
 
 	panic("should not reach here");
