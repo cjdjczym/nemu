@@ -10,6 +10,7 @@
 #include "data-mov/movzb.h"
 #include "data-mov/movzw.h"
 #include "data-mov/movsx.h"
+#include "data-mov/mov-sreg.h"
 
 #include "jcc/call.h"
 #include "jcc/je.h"
